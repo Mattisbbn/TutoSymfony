@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Repository\RecipeRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -19,7 +20,11 @@ final class RecipeController extends AbstractController
     )]
     public function index(Request $request,RecipeRepository $repository): Response
     {
-        $recipes = $repository->findAll();
+        $recipes = $repository->findWithDurationLowerThan(10);
+
+        dd($repository->findTotalDuration());
+
+      
         return $this->render('recipe/index.html.twig',[ 'recipes' => $recipes ]);
     }
 
