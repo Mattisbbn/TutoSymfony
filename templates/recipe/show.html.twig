@@ -1,0 +1,14 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}LA recette{% endblock %}
+
+{% block body %}
+
+<div class="container mt-4">
+   <h1>{{recipe.title}}</h1>
+
+   <p>
+   {{ recipe.text | nl2br }}
+    </p>
+</div>
+{% endblock %}
