@@ -9,6 +9,8 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use App\Entity\Recipe;
+use App\Form\RecipeType;
 
 final class RecipeController extends AbstractController
 {
@@ -22,7 +24,7 @@ final class RecipeController extends AbstractController
     {
         $recipes = $repository->findWithDurationLowerThan(10);
 
-        dd($repository->findTotalDuration());
+      
 
       
         return $this->render('recipe/index.html.twig',[ 'recipes' => $recipes ]);
@@ -45,5 +47,39 @@ final class RecipeController extends AbstractController
                ],301);
            }
            return $this->render('recipe/show.html.twig', ['recipe' => $recipe]);
+    }
+
+
+    #[Route('/recettes/{id}/edit', "recipe.edit")]
+    public function edit(Recipe $recipe, Request $request, EntityManagerInterface $em): Response{
+
+        $form = $this->createForm(RecipeType::class, $recipe);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $em->flush();
+            $this->addFlash("success","La recette à bien été mdifiée.");
+            return $this->redirectToRoute("recipe.index");
+        }
+
+
+        return $this->render("recipe/edit.html.twig", ["recipe" => $recipe,"form"=> $form ]);
+    }
+
+    #[Route('/recettes/create', "recipe.create")]
+    public function create( Request $request , EntityManagerInterface $em): Response{
+         $recipe = new Recipe();
+
+        $form = $this->createForm(RecipeType::class, $recipe);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $recipe->setCreatedAt(new \DateTimeImmutable());
+            $recipe->setUpdatedAt(new \DateTimeImmutable());
+            $em->persist($recipe);
+            $em->flush();
+        }
+
+        return $this->render("recipe/create.html.twig", ["form"=> $form ]);
+
     }
 }
