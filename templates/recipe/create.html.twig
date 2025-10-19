@@ -1,16 +1,15 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}LA recette{% endblock %}
+{% block title "Creer une nouvelle recette" %}
 
 {% block body %}
 
 <div class="container mt-4">
-   <h1>Creer une recette</h1>
+   <h1>Creer une nouvelle recette</h1>
 
 
-   {{ form_start(form) }}
-       {{ form_widget(form) }}
-   {{ form_end(form) }}
+   {{ form(form) }}
+ 
 
 
 </div>

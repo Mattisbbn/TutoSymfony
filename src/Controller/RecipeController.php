@@ -68,7 +68,7 @@ final class RecipeController extends AbstractController
 
     #[Route('/recettes/create', "recipe.create")]
     public function create( Request $request , EntityManagerInterface $em): Response{
-         $recipe = new Recipe();
+        $recipe = new Recipe();
 
         $form = $this->createForm(RecipeType::class, $recipe);
         $form->handleRequest($request);
@@ -77,9 +77,18 @@ final class RecipeController extends AbstractController
             $recipe->setUpdatedAt(new \DateTimeImmutable());
             $em->persist($recipe);
             $em->flush();
+            $this->addFlash('success','La recette a bien été créée');
+            return $this->redirectToRoute('recipe.index');
         }
 
-        return $this->render("recipe/create.html.twig", ["form"=> $form ]);
+        return $this->render("recipe/create.html.twig", ["form" => $form]);
+    }
 
+    #[Route('/recettes/{id}/remove',name: 'recipe.delete', methods:['DELETE'])]
+    public function remove(Recipe $recipe,EntityManagerInterface $em){
+        $em->remove($recipe);
+        $em->flush();
+        $this->addFlash("sucess","La recette à bien été suprimée.");
+        return $this->redirectToRoute("recipe.index");
     }
 }
